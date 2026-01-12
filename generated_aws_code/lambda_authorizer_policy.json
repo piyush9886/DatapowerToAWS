@@ -8,12 +8,12 @@
         "logs:CreateLogStream",
         "logs:PutLogEvents"
       ],
-      "Resource": "arn:aws:logs:${aws_region}:${aws_account_id}:log-group:/aws/lambda/*"
+      "Resource": "arn:aws:logs:${region}:${account_id}:log-group:/aws/lambda/${project_name}-*:*"
     },
     {
       "Effect": "Allow",
       "Action": "secretsmanager:GetSecretValue",
-      "Resource": "${secret_arn}"
+      "Resource": "${ldap_secret_arn}"
     }
   ]
 }

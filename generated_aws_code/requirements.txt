@@ -1,7 +1,3 @@
-# This file lists Python dependencies for the Lambda functions.
-# To create a layer, run the following commands:
-# mkdir -p layer/python
-# pip install -r requirements.txt -t layer/python
-
+boto3
 ldap3
 requests

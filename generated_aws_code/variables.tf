@@ -1,23 +1,29 @@
 variable "aws_region" {
-  description = "The AWS region to deploy resources."
+  description = "AWS region to deploy resources."
   type        = string
   default     = "us-east-1"
 }
 
+variable "project_name" {
+  description = "A unique name for the project to prefix resources."
+  type        = string
+  default     = "underwriting-api"
+}
+
 variable "backend_soap_url" {
-  description = "The full URL of the backend SOAP service."
+  description = "The URL of the backend SOAP service."
   type        = string
   default     = "https://backend.example.com/soap/UnderwritingService"
 }
 
 variable "ldap_server_host" {
-  description = "Hostname or IP address of the LDAP server."
+  description = "Hostname of the LDAP server."
   type        = string
   default     = "ldap.example.com"
 }
 
 variable "ldap_server_port" {
-  description = "Port for the LDAP server."
+  description = "Port of the LDAP server."
   type        = number
   default     = 389
 }
@@ -29,21 +35,26 @@ variable "ldap_base_dn" {
 }
 
 variable "ldap_bind_dn" {
-  description = "The DN of the user for binding to LDAP to perform searches."
+  description = "DN for the service account to bind to LDAP."
   type        = string
-  sensitive   = true
   default     = "CN=svc-datapower,OU=ServiceAccounts,DC=example,DC=com"
 }
 
 variable "ldap_bind_password" {
-  description = "Password for the LDAP bind user."
+  description = "Password for the LDAP service account."
   type        = string
   sensitive   = true
-  default     = "REPLACE_WITH_SECURE_PASSWORD"
+  # Provide this value in a .tfvars file or via environment variable TF_VAR_ldap_bind_password
 }
 
-variable "ldap_auth_group" {
+variable "ldap_auth_group_dn" {
   description = "The DN of the LDAP group required for authorization."
   type        = string
   default     = "CN=Underwriters,OU=Groups,DC=example,DC=com"
+}
+
+variable "ldap_use_ssl" {
+  description = "Whether to use SSL/TLS (LDAPS) to connect to the LDAP server."
+  type        = bool
+  default     = false
 }
