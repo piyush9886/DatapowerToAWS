@@ -1,0 +1,122 @@
+{
+  "summary": {
+    "description": "Mapping of DataPower configuration 'MPGW_UnderwritingAPI' to an AWS serverless architecture.",
+    "datapower_gateway": "MPGW_UnderwritingAPI",
+    "aws_primary_resources": [
+      "aws_api_gateway_rest_api",
+      "aws_lambda_function",
+      "aws_api_gateway_authorizer",
+      "aws_cloudfront_distribution"
+    ]
+  },
+  "mappings": [
+    {
+      "datapower_object": "MPGW_UnderwritingAPI",
+      "datapower_type": "MultiProtocolGateway",
+      "aws_resources": [
+        {
+          "resource_type": "aws_api_gateway_rest_api",
+          "resource_name": "underwriting_api",
+          "notes": "Acts as the main entry point for the REST API, analogous to the MPGW front-side handler."
+        }
+      ]
+    },
+    {
+      "datapower_object": "PP_Underwriting",
+      "datapower_type": "ProcessingPolicy",
+      "aws_resources": [
+        {
+          "resource_type": "aws_api_gateway_method",
+          "resource_name": "api_method_customer and api_method_submit",
+          "notes": "Maps incoming paths /v1/customer and /v1/underwriting/submit to the transformer Lambda integration."
+        },
+        {
+          "resource_type": "aws_lambda_function",
+          "resource_name": "transformer_lambda",
+          "notes": "Executes the core business logic, equivalent to the processing rules' actions (AAA, XSLT, Route)."
+        }
+      ]
+    },
+    {
+      "datapower_object": "AAA_Policy_Underwriting",
+      "datapower_type": "AAAPolicy",
+      "aws_resources": [
+        {
+          "resource_type": "aws_api_gateway_authorizer",
+          "resource_name": "ldap_authorizer",
+          "notes": "A Lambda authorizer that replicates the entire AAA flow: HTTP Basic extraction, LDAP authentication, and LDAP group-based authorization."
+        },
+        {
+          "resource_type": "aws_lambda_function",
+          "resource_name": "authorizer_lambda",
+          "notes": "The code that executes the authorization logic."
+        }
+      ]
+    },
+    {
+      "datapower_object": "LDAP_Underwriters",
+      "datapower_type": "LDAPServer",
+      "aws_resources": [
+        {
+          "resource_type": "aws_secretsmanager_secret",
+          "resource_name": "ldap_bind_credentials",
+          "notes": "Securely stores the LDAP bind DN and password. LDAP server details are stored as Terraform variables."
+        }
+      ]
+    },
+    {
+      "datapower_object": "URLRewrite_Underwriting",
+      "datapower_type": "URLRewritePolicy",
+      "aws_resources": [
+        {
+          "resource_type": "aws_cloudfront_distribution",
+          "resource_name": "rewrite_distribution",
+          "notes": "A separate CloudFront distribution to handle the path-based header injection rule."
+        },
+        {
+          "resource_type": "aws_lambda_function",
+          "resource_name": "rewrite_handler_lambda_edge",
+          "notes": "A Lambda@Edge function that inspects the request and injects the SOAPAction header, replicating the rewrite rule."
+        }
+      ]
+    },
+    {
+      "datapower_object": "json-to-soap-application.xsl",
+      "datapower_type": "XSLT",
+      "aws_resources": [
+        {
+          "resource_type": "aws_lambda_function",
+          "resource_name": "transformer_lambda",
+          "notes": "The transformation logic is implemented in Python inside the main integration Lambda, using xml.etree.ElementTree for safe XML construction. URI-based routing is handled by checking the event['path']."
+        }
+      ]
+    },
+    {
+      "datapower_object": "insert-wsse-username-token.xsl",
+      "datapower_type": "XSLT",
+      "aws_resources": [
+        {
+          "resource_type": "aws_lambda_function",
+          "resource_name": "transformer_lambda",
+          "notes": "WS-Security header injection is performed in the integration Lambda, using credentials passed from the Lambda Authorizer context."
+        }
+      ]
+    },
+    {
+      "datapower_object": "BACKEND_SOAP_ALIAS",
+      "datapower_type": "HTTPProxyService",
+      "aws_resources": [
+        {
+          "resource_type": "aws_lambda_function",
+          "resource_name": "transformer_lambda",
+          "notes": "The backend URL is configured as an environment variable for the transformer Lambda, which makes a direct HTTP call to it."
+        },
+        {
+          "resource_type": "aws_cloudfront_distribution",
+          "resource_name": "rewrite_distribution",
+          "notes": "The backend URL is also used as the origin for the CloudFront distribution that handles the URL rewrite rule."
+        }
+      ]
+    }
+  ]
+}

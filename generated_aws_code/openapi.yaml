@@ -1,0 +1,98 @@
+openapi: 3.0.0
+info:
+  title: Underwriting API
+  description: API for customer and underwriting submission, migrated from DataPower.
+  version: 1.0.0
+servers:
+  - url: https://{api_id}.execute-api.{region}.amazonaws.com/{stage}
+    variables:
+      api_id:
+        default: PLEASE_UPDATE
+      region:
+        default: us-east-1
+      stage:
+        default: v1
+paths:
+  /v1/customer:
+    post:
+      summary: Save Customer Information
+      operationId: saveCustomer
+      security:
+        - BasicAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                customer:
+                  type: object
+                address:
+                  type: object
+                demographics:
+                  type: object
+                employment:
+                  type: object
+      responses:
+        '200':
+          description: Successful response from backend
+          content:
+            application/xml:
+              schema:
+                type: string
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      x-amazon-apigateway-integration:
+        type: "aws_proxy"
+        uri: arn:aws:apigateway:${aws_region}:lambda:path/2015-03-31/functions/${transformer_lambda_arn}/invocations
+        httpMethod: "POST"
+  /v1/underwriting/submit:
+    post:
+      summary: Submit Underwriting Application
+      operationId: submitUnderwriting
+      security:
+        - BasicAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                customer:
+                  type: object
+                address:
+                  type: object
+                demographics:
+                  type: object
+                employment:
+                  type: object
+      responses:
+        '200':
+          description: Successful response from backend
+          content:
+            application/xml:
+              schema:
+                type: string
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+      x-amazon-apigateway-integration:
+        type: "aws_proxy"
+        uri: arn:aws:apigateway:${aws_region}:lambda:path/2015-03-31/functions/${transformer_lambda_arn}/invocations
+        httpMethod: "POST"
+components:
+  securitySchemes:
+    BasicAuth:
+      type: apiKey
+      name: Authorization
+      in: header
+      x-amazon-apigateway-authorizer:
+        type: request
+        authorizerUri: arn:aws:apigateway:${aws_region}:lambda:path/2015-03-31/functions/${authorizer_lambda_arn}/invocations
+        identitySource: method.request.header.Authorization
+        authorizerResultTtlInSeconds: 300
