@@ -1,0 +1,9 @@
+<AssignMessage name="AM-Response-Map">
+<!-- Map response -->
+<AssignTo createNew="true" type="request">request</AssignTo>
+<Set>
+  <Payload contentType="application/json">
+    {}
+  </Payload>
+</Set>
+</AssignMessage>

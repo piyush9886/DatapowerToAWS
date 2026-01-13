@@ -1,0 +1,5 @@
+<MessageLogging name="ML-Response-Log">
+<Syslog>
+<Message>Response sent with status {response.status.code}</Message>
+</Syslog>
+</MessageLogging>

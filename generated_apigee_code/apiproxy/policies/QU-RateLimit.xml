@@ -1,0 +1,5 @@
+<Quota name="QU-RateLimit">
+<Allow count="100"/>
+<Interval>1</Interval>
+<TimeUnit>minute</TimeUnit>
+</Quota>

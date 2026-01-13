@@ -1,0 +1,9 @@
+<AssignMessage name="AM-PassThrough">
+<!-- Pass-through message assignment -->
+<AssignTo createNew="true" type="request">request</AssignTo>
+<Set>
+  <Payload contentType="application/json">
+    {}
+  </Payload>
+</Set>
+</AssignMessage>

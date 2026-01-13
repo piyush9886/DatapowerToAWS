@@ -1,0 +1,9 @@
+<AssignMessage name="AV-Set-Context">
+<!-- Initialize context -->
+<AssignTo createNew="true" type="request">request</AssignTo>
+<Set>
+  <Payload contentType="application/json">
+    {}
+  </Payload>
+</Set>
+</AssignMessage>

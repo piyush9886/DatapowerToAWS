@@ -1,0 +1,66 @@
+<ProxyEndpoint name="default">
+<PreFlow name="PreFlow">
+  <Request>
+    <Step><Name>EV-Extract-Request</Name></Step>
+    <Step><Name>AV-Set-Context</Name></Step>
+    <Step><Name>QU-RateLimit</Name></Step>
+    <Step><Name>ML-Request-Log</Name></Step>
+  </Request>
+  <Response/>
+</PreFlow>
+<Flows>
+<Flow name="get--accounts-accountId">
+  <Condition>(proxy.pathsuffix MatchesPath "/accounts/{accountId}") and (request.verb = "GET")</Condition>
+  <Request>
+    <Step><Name>AM-PassThrough</Name></Step>
+  </Request>
+  <Response/>
+</Flow>
+<Flow name="get--accounts-accountId-details">
+  <Condition>(proxy.pathsuffix MatchesPath "/accounts/{accountId}/details") and (request.verb = "GET")</Condition>
+  <Request>
+    <Step><Name>AM-PassThrough</Name></Step>
+  </Request>
+  <Response/>
+</Flow>
+<Flow name="post--claims">
+  <Condition>(proxy.pathsuffix MatchesPath "/claims") and (request.verb = "POST")</Condition>
+  <Request>
+    <Step><Name>AM-PassThrough</Name></Step>
+  </Request>
+  <Response/>
+</Flow>
+<Flow name="post--endorsements">
+  <Condition>(proxy.pathsuffix MatchesPath "/endorsements") and (request.verb = "POST")</Condition>
+  <Request>
+    <Step><Name>AM-PassThrough</Name></Step>
+  </Request>
+  <Response/>
+</Flow>
+</Flows>
+<PostFlow name="PostFlow">
+  <Request/>
+  <Response>
+    <Step><Name>EV-Extract-Response</Name></Step>
+    <Step><Name>AM-Response-Map</Name></Step>
+    <Step><Name>ML-Response-Log</Name></Step>
+  </Response>
+</PostFlow>
+<FaultRules>
+  <FaultRule name="DefaultFault">
+    <Step><Name>RF-Error-Default</Name></Step>
+  </FaultRule>
+
+  <FaultRule name="RateLimitFault">
+    <Condition>(fault.name = "QuotaViolation")</Condition>
+    <Step><Name>RF-Error-RateLimit</Name></Step>
+  </FaultRule>
+
+  <FaultRule name="InvalidRouteFault">
+    <Step><Name>RF-Error-InvalidRoute</Name></Step>
+  </FaultRule>
+</FaultRules>
+<HTTPProxyConnection>
+  <BasePath>/</BasePath>
+</HTTPProxyConnection>
+</ProxyEndpoint>

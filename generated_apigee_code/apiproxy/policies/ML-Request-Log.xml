@@ -1,0 +1,5 @@
+<MessageLogging name="ML-Request-Log">
+<Syslog>
+<Message>Incoming request {request.verb} {proxy.pathsuffix}</Message>
+</Syslog>
+</MessageLogging>
