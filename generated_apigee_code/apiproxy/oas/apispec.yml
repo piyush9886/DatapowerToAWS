@@ -1,0 +1,230 @@
+openapi: 3.0.0
+info:
+  title: Auto Claims Management API
+  version: "1.0.0"
+  description: Includes OpenAPI paths, schemas, and examples for typical Auto Claims operations.
+
+  contact:
+    name: API Platform Team
+    email: apiteam@example.com
+
+servers:
+  - url: http://localhost:8080
+    description: Development server
+  - url: https://api.example.com
+    description: Production server
+
+paths:
+  '/accounts/{accountId}':
+    get:
+      summary: Get account by ID
+      description: 
+      operationId: getAccount
+      responses:
+        '200':
+          description: Account found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account'
+        '404':
+          description: Account not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  '/accounts/{accountId}/details':
+    get:
+      summary: Get extended account details
+      description: 
+      operationId: getAccountDetails
+      responses:
+        '200':
+          description: Account details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AccountDetails'
+        '404':
+          description: Account not found
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  '/claims':
+    post:
+      summary: Submit a new claim
+      description: 
+      operationId: submitClaim
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ClaimSubmission'
+        required: true
+      responses:
+        '201':
+          description: Claim created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ClaimResponse'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+  '/endorsements':
+    post:
+      summary: Submit a policy endorsement
+      description: 
+      operationId: submitEndorsement
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/EndorsementRequest'
+        required: true
+      responses:
+        '201':
+          description: Endorsement accepted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/EndorsementResponse'
+        '400':
+          description: Invalid request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
+components:
+  schemas:
+    Account:
+      type: object
+      properties:
+        id:
+          type: string
+        name:
+          type: string
+        status:
+          type: string
+          enum:
+            - 'ACTIVE'
+            - 'INACTIVE'
+            - 'SUSPENDED'
+      required:
+        - id
+        - name
+        - status
+    AccountDetails:
+    Address:
+      type: object
+      properties:
+        line1:
+          type: string
+        line2:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        postalCode:
+          type: string
+    ClaimSubmission:
+      type: object
+      properties:
+        accountId:
+          type: string
+        policyId:
+          type: string
+        type:
+          type: string
+          enum:
+            - 'AUTO'
+            - 'HOME'
+            - 'LIFE'
+            - 'HEALTH'
+        incidentDate:
+          type: string
+        amount:
+          type: number
+        description:
+          type: string
+      required:
+        - accountId
+        - policyId
+        - type
+        - incidentDate
+        - amount
+    ClaimResponse:
+      type: object
+      properties:
+        claimId:
+          type: string
+        status:
+          type: string
+          enum:
+            - 'RECEIVED'
+            - 'IN_REVIEW'
+            - 'APPROVED'
+            - 'REJECTED'
+        submittedAt:
+          type: string
+      required:
+        - claimId
+        - status
+        - submittedAt
+    EndorsementRequest:
+      type: object
+      properties:
+        policyId:
+          type: string
+        type:
+          type: string
+          enum:
+            - 'ADDRESS_CHANGE'
+            - 'COVERAGE_UPDATE'
+            - 'DRIVER_ADDITION'
+        effectiveDate:
+          type: string
+        details:
+          type: object
+      required:
+        - policyId
+        - type
+        - effectiveDate
+    EndorsementResponse:
+      type: object
+      properties:
+        endorsementId:
+          type: string
+        status:
+          type: string
+          enum:
+            - 'RECEIVED'
+            - 'IN_REVIEW'
+            - 'APPLIED'
+        effectiveDate:
+          type: string
+      required:
+        - endorsementId
+        - status
+        - effectiveDate
+    Error:
+      type: object
+      properties:
+        code:
+          type: string
+        message:
+          type: string
+        details:
+          type: object
+      required:
+        - code
+        - message

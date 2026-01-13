@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<APIProxy name="auto-claims-management-api">
+  <Description>API Proxy generated from APIC definition</Description>
+  <CreationTime>2026-01-13T23:32:12Z</CreationTime>
+  <DisplayName>Auto Claims Management API</DisplayName>
+  
+  <ProxyEndpoints>
+    <ProxyEndpoint>default</ProxyEndpoint>
+  </ProxyEndpoints>
+  
+  <TargetEndpoints>
+    <TargetEndpoint>default</TargetEndpoint>
+  </TargetEndpoints>
+  
+  <Policies>
+    <Step><Name>EV-Extract-Request</Name></Step>
+    <Step><Name>AV-Set-Context</Name></Step>
+    <Step><Name>AM-PassThrough</Name></Step>
+    <Step><Name>AM-Response-Map</Name></Step>
+  </Policies>
+</APIProxy>
